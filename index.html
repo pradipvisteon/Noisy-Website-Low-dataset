@@ -1010,9 +1010,7 @@
         </div>
         
         <div class="submit-actions">
-          ${sample.id === samples[samples.length - 1].id 
-            ? '<button class="submit-btn" id="submit-all-btn" type="button">Submit All Ratings</button>'
-            : '<button class="submit-btn" id="next-sample-btn" type="button">Next Sample</button>'}
+          <button class="submit-btn" id="submit-ratings-btn" type="button">Submit Ratings</button>
         </div>
         
         <h3 style="margin-top:2.5rem; margin-bottom:0.5rem; font-family:'Syne', sans-serif;">Metric Visualization Plots</h3>
@@ -1176,7 +1174,15 @@
     checkCdsid();
 
     detailPanelEl.addEventListener('click', async (e) => {
-      if (e.target.id === 'next-sample-btn') {
+      if (e.target.id === 'submit-ratings-btn') {
+        const btn = e.target;
+        const cdsid = localStorage.getItem('user_cdsid');
+
+        if (!cdsid) {
+          alert("Your session has lost your CDSID. Please refresh the page.");
+          return;
+        }
+
         // Validate current sample
         const ratings = {};
         detailPanelEl.querySelectorAll('.rating-input').forEach(input => {
@@ -1186,108 +1192,49 @@
 
         const totalInputs = detailPanelEl.querySelectorAll('.rating-input').length;
         if (Object.keys(ratings).length < totalInputs) {
-          alert(`Please provide a rating for all ${totalInputs} algorithms before moving to the next sample.`);
-          return;
-        }
-
-        // Find current index and move to next
-        const currentIndex = samples.findIndex(s => s.id === state.selected);
-        if (currentIndex < samples.length - 1) {
-          setSelected(samples[currentIndex + 1].id);
-        }
-      }
-
-      if (e.target.id === 'submit-all-btn') {
-        const btn = e.target;
-        const cdsid = localStorage.getItem('user_cdsid');
-
-        if (!cdsid) {
-          alert("Your session has lost your CDSID. Please refresh the page.");
-          return;
-        }
-
-        // Validate final sample
-        const currentRatings = {};
-        detailPanelEl.querySelectorAll('.rating-input').forEach(input => {
-          const val = parseFloat(input.value);
-          if (!isNaN(val)) currentRatings[input.dataset.algo] = val;
-        });
-        
-        const totalInputs = detailPanelEl.querySelectorAll('.rating-input').length;
-        if (Object.keys(currentRatings).length < totalInputs) {
           alert(`Please provide a rating for all ${totalInputs} algorithms before submitting.`);
           return;
         }
 
-        // Gather all ratings
-        const allData = {};
-        const missingSamples = [];
-        
-        for (const s of samples) {
-          const sampleRatings = {};
-          let missingCount = 0;
-          for (const algo of algorithms) {
-            const valStr = localStorage.getItem(`rating_${s.id}_${algo.key}`);
-            const val = parseFloat(valStr);
-            if (!isNaN(val)) {
-              sampleRatings[algo.key] = val;
-            } else {
-              missingCount++;
-            }
-          }
-          if (missingCount > 0) {
-            missingSamples.push(s.displayName);
-          } else {
-            allData[s.id] = sampleRatings;
-          }
-        }
-
-        if (missingSamples.length > 0) {
-          alert(`You are missing ratings for the following files:\n\n${missingSamples.map(name => `- ${name}`).join('\n')}\n\nPlease click on them in the left sidebar and complete them.`);
-          return;
-        }
-
         const originalText = btn.textContent;
-        btn.textContent = "Submitting...";
+        btn.textContent = "Saving...";
         btn.disabled = true;
 
         try {
+          const sample = samples.find(s => s.id === state.selected);
           const docRef = doc(db, "ratings", cdsid);
-          
-          // Check for duplicate submission
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            alert("You have already submitted an evaluation. Thank you!");
-            btn.textContent = originalText;
-            btn.disabled = false;
-            return;
-          }
 
           await setDoc(docRef, {
             cdsid: cdsid,
-            samples: allData,
+            samples: {
+              [sample.displayName]: ratings
+            },
             timestamp: serverTimestamp()
+          }, { merge: true });
+
+          // Clear inputs and remove from local storage
+          detailPanelEl.querySelectorAll('.rating-input').forEach(input => {
+            input.value = '';
+            localStorage.removeItem(`rating_${sample.id}_${input.dataset.algo}`);
           });
 
-          // Clear local storage
-          samples.forEach(s => {
-            algorithms.forEach(algo => {
-              localStorage.removeItem(`rating_${s.id}_${algo.key}`);
-            });
-          });
-          
-          alert("Thank you! All your ratings have been successfully submitted.");
-          
-          // Optionally clear the UI inputs
-          detailPanelEl.querySelectorAll('.rating-input').forEach(input => input.value = '');
+          // Move to next sample if not at the end
+          const currentIndex = samples.findIndex(s => s.id === state.selected);
+          if (currentIndex < samples.length - 1) {
+            setSelected(samples[currentIndex + 1].id);
+          } else {
+            alert("Thank you! You have completed all 19 files successfully.");
+            btn.textContent = "Done";
+            return;
+          }
           
         } catch (error) {
           console.error("Error adding document: ", error);
           alert("Error saving ratings. Please check your console.");
+          btn.textContent = originalText;
+          btn.disabled = false;
+          return;
         }
-
-        btn.textContent = originalText;
-        btn.disabled = false;
       }
     });
 
