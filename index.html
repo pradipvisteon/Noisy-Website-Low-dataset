@@ -1204,6 +1204,24 @@
           const sample = samples.find(s => s.id === state.selected);
           const docRef = doc(db, "ratings", cdsid);
 
+          // Check if already submitted
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data.samples && data.samples[sample.displayName]) {
+              alert(`You have already submitted ratings for ${sample.displayName}.`);
+              btn.textContent = originalText;
+              btn.disabled = false;
+              
+              // Push them to next available if possible
+              const currentIndex = samples.findIndex(s => s.id === state.selected);
+              if (currentIndex < samples.length - 1) {
+                setSelected(samples[currentIndex + 1].id);
+              }
+              return;
+            }
+          }
+
           await setDoc(docRef, {
             cdsid: cdsid,
             samples: {
