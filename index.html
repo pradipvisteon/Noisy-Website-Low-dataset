@@ -729,9 +729,11 @@
 <body>
   <div id="cdsid-modal-overlay" class="modal-overlay">
     <div class="modal-content">
-      <h3>Welcome to the Evaluation</h3>
-      <p>Please enter your CDSID to begin rating the audio samples.</p>
+      <h3 id="modal-title">Welcome to the Evaluation</h3>
+      <p id="modal-desc">Please enter your CDSID and password to begin.</p>
       <input type="text" id="modal-cdsid-input" class="cdsid-input" placeholder="Enter CDSID" />
+      <input type="password" id="modal-password-input" class="cdsid-input" placeholder="Password" style="margin-bottom: 1rem;"/>
+      <div id="modal-error" style="color: var(--danger); font-size: 0.85rem; margin-bottom: 1rem; display: none;"></div>
       <button id="modal-cdsid-submit" class="submit-btn" style="width: 100%;">Start Rating</button>
     </div>
   </div>
@@ -769,7 +771,13 @@
     <section class="legend-bar" id="legend"></section>
 
     <main class="main-layout">
-      <aside class="sidebar" id="sample-list" aria-label="Sample list"></aside>
+      <div style="display:flex; flex-direction:column; gap:var(--space-3);">
+        <aside class="sidebar" id="sample-list" aria-label="Sample list"></aside>
+        <div class="sidebar-actions" style="display:flex; flex-direction:column; gap:0.5rem;">
+          <button id="btn-view-rankings" class="submit-btn" style="width: 100%; font-size: 0.85rem; padding: 0.6rem;">View Rankings</button>
+          <button id="btn-global-stats" class="submit-btn" style="width: 100%; font-size: 0.85rem; padding: 0.6rem; background: var(--sqa);">Global Stats</button>
+        </div>
+      </div>
       <section class="detail-panel" id="detail-panel"></section>
     </main>
 
@@ -782,7 +790,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDelpix5jlxN1sAnndvued-BqDyVEVlBa0",
@@ -1166,31 +1174,116 @@
 
     // Modal Logic
     const modalOverlay = document.getElementById('cdsid-modal-overlay');
-    const modalInput = document.getElementById('modal-cdsid-input');
+    const modalCdsidInput = document.getElementById('modal-cdsid-input');
+    const modalPasswordInput = document.getElementById('modal-password-input');
+    const modalError = document.getElementById('modal-error');
     const modalSubmit = document.getElementById('modal-cdsid-submit');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDesc = document.getElementById('modal-desc');
 
     function checkCdsid() {
       const savedCdsid = localStorage.getItem('user_cdsid');
+      modalOverlay.classList.remove('hidden');
       if (savedCdsid) {
-        modalOverlay.classList.add('hidden');
+        modalCdsidInput.value = savedCdsid;
+        modalTitle.textContent = "Welcome Back!";
+        modalDesc.textContent = "Please enter your password to continue.";
+        modalPasswordInput.focus();
       } else {
-        modalOverlay.classList.remove('hidden');
-        modalInput.focus();
+        modalCdsidInput.focus();
       }
     }
 
-    modalSubmit.addEventListener('click', () => {
-      const val = modalInput.value.trim().toUpperCase();
-      if (!val) {
-        alert("Please enter a valid CDSID.");
+    modalSubmit.addEventListener('click', async () => {
+      const cdsid = modalCdsidInput.value.trim().toUpperCase();
+      const pwd = modalPasswordInput.value.trim();
+      modalError.style.display = 'none';
+
+      if (!cdsid || !/^[A-Z0-9]+$/.test(cdsid)) {
+        modalError.textContent = "Invalid CDSID. Letters and numbers only.";
+        modalError.style.display = 'block';
         return;
       }
-      if (!/^[A-Z0-9]+$/.test(val)) {
-        alert("CDSID can only contain letters and numbers. No special characters are allowed.");
+      if (!pwd) {
+        modalError.textContent = "Please enter a password.";
+        modalError.style.display = 'block';
         return;
       }
-      localStorage.setItem('user_cdsid', val);
-      modalOverlay.classList.add('hidden');
+
+      const originalText = modalSubmit.textContent;
+      modalSubmit.textContent = "Verifying...";
+      modalSubmit.disabled = true;
+
+      try {
+        const docRef = doc(db, "ratings", cdsid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.password) {
+            if (data.password !== pwd) {
+              modalError.textContent = "Incorrect password.";
+              modalError.style.display = 'block';
+              modalSubmit.textContent = originalText;
+              modalSubmit.disabled = false;
+              return;
+            }
+          } else {
+            // Legacy user without password, set it
+            if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(pwd)) {
+              modalError.textContent = "Legacy user: Please set a secure password (min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char).";
+              modalError.style.display = 'block';
+              modalSubmit.textContent = originalText;
+              modalSubmit.disabled = false;
+              return;
+            }
+            
+            // Calculate existing winCounters
+            const calculatedWins = { WebRTC:0, sqa:0, RNN:0, HybridRW:0, HybridRS:0, RWPV:0, RSPV:0, RWADAPV:0, RSADAPV:0 };
+            if (data.samples) {
+              for (const [sampleName, fileRatings] of Object.entries(data.samples)) {
+                let highest = -1;
+                let winner = null;
+                for (const [algo, score] of Object.entries(fileRatings)) {
+                  if (score > highest) {
+                    highest = score;
+                    winner = algo;
+                  }
+                }
+                if (winner && calculatedWins[winner] !== undefined) {
+                  calculatedWins[winner]++;
+                }
+              }
+            }
+
+            await updateDoc(docRef, { password: pwd, winCounters: calculatedWins });
+          }
+        } else {
+          // New user
+          if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(pwd)) {
+            modalError.textContent = "Password must have min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char.";
+            modalError.style.display = 'block';
+            modalSubmit.textContent = originalText;
+            modalSubmit.disabled = false;
+            return;
+          }
+          await setDoc(docRef, {
+            cdsid: cdsid,
+            password: pwd,
+            timestamp: serverTimestamp(),
+            winCounters: { WebRTC:0, sqa:0, RNN:0, HybridRW:0, HybridRS:0, RWPV:0, RSPV:0, RWADAPV:0, RSADAPV:0 }
+          });
+        }
+
+        localStorage.setItem('user_cdsid', cdsid);
+        modalOverlay.classList.add('hidden');
+      } catch (e) {
+        modalError.textContent = "Error connecting to database.";
+        modalError.style.display = 'block';
+      }
+
+      modalSubmit.textContent = originalText;
+      modalSubmit.disabled = false;
     });
 
     checkCdsid();
@@ -1244,13 +1337,27 @@
             }
           }
 
-          await setDoc(docRef, {
+          let highestScore = -1;
+          let winnerAlgo = null;
+          for (const [algo, score] of Object.entries(ratings)) {
+            if (score > highestScore) {
+              highestScore = score;
+              winnerAlgo = algo;
+            }
+          }
+
+          const updateData = {
             cdsid: cdsid,
             samples: {
               [sample.displayName]: ratings
             },
             timestamp: serverTimestamp()
-          }, { merge: true });
+          };
+          if (winnerAlgo) {
+             updateData.winCounters = { [winnerAlgo]: increment(1) };
+          }
+
+          await setDoc(docRef, updateData, { merge: true });
 
           // Clear inputs and remove from local storage
           detailPanelEl.querySelectorAll('.rating-input').forEach(input => {
@@ -1289,6 +1396,138 @@
         const algoKey = e.target.dataset.algo;
         
         localStorage.setItem(`rating_${sampleId}_${algoKey}`, val);
+      }
+    });
+
+    document.getElementById('btn-global-stats').addEventListener('click', async () => {
+      detailPanelEl.innerHTML = `<h2 class="detail-title">Loading Global Stats...</h2>`;
+      try {
+        const querySnapshot = await getDocs(collection(db, "ratings"));
+        const totals = { WebRTC:0, sqa:0, RNN:0, HybridRW:0, HybridRS:0, RWPV:0, RSPV:0, RWADAPV:0, RSADAPV:0 };
+        let totalFilesRated = 0;
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          if (data.winCounters) {
+            for (const [algo, count] of Object.entries(data.winCounters)) {
+               if (totals[algo] !== undefined) totals[algo] += count;
+               totalFilesRated += count;
+            }
+          }
+        });
+
+        let maxWins = Math.max(...Object.values(totals), 1);
+        let barsHtml = '';
+        const algoLabels = { WebRTC: "WebRTC", sqa: "SQA", RNN: "RNN", HybridRW: "HybridRW", HybridRS: "HybridRS", RWPV: "RWPV", RSPV: "RSPV", RWADAPV: "RWADAPV", RSADAPV: "RSADAPV" };
+        const algoColors = { WebRTC: "var(--webrtc)", sqa: "var(--sqa)", RNN: "var(--rnn)", HybridRW: "var(--hybridrw)", HybridRS: "var(--hybridrs)", RWPV: "var(--rwpv)", RSPV: "var(--rspv)", RWADAPV: "var(--rwadapv)", RSADAPV: "var(--rsadapv)" };
+
+        for (const [algo, count] of Object.entries(totals)) {
+          const pct = (count / maxWins) * 100;
+          barsHtml += `
+            <div style="margin-bottom: 1rem;">
+              <div style="display:flex; justify-content:space-between; font-size: 0.85rem; margin-bottom: 0.3rem;">
+                <span style="color:${algoColors[algo]};">${algoLabels[algo]}</span>
+                <span>${count} wins</span>
+              </div>
+              <div style="width: 100%; height: 24px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
+                <div style="width: ${pct}%; height: 100%; background: ${algoColors[algo]}; transition: width 0.5s ease;"></div>
+              </div>
+            </div>
+          `;
+        }
+
+        detailPanelEl.innerHTML = `
+          <h2 class="detail-title">Global Winners</h2>
+          <div class="detail-sub">Total files rated across all users: ${totalFilesRated}</div>
+          <div style="margin-top: 2rem; background: var(--panel-2); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border);">
+            ${barsHtml}
+          </div>
+        `;
+      } catch (e) {
+        detailPanelEl.innerHTML = `<h2 class="detail-title">Error loading stats</h2><p>${e.message}</p>`;
+      }
+    });
+
+    document.getElementById('btn-view-rankings').addEventListener('click', async () => {
+      detailPanelEl.innerHTML = `<h2 class="detail-title">Loading Rankings...</h2>`;
+      try {
+        const querySnapshot = await getDocs(collection(db, "ratings"));
+        let usersHtml = '<div style="display:flex; flex-wrap:wrap; gap:1rem; margin-top:2rem;">';
+        const usersData = {};
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          usersData[data.cdsid] = data;
+          usersHtml += `<button class="submit-btn cdsid-btn" data-id="${data.cdsid}" style="background: var(--panel-2); border: 1px solid var(--border); color: var(--text); padding: 0.8rem 1.5rem;">${data.cdsid}</button>`;
+        });
+        usersHtml += '</div>';
+
+        detailPanelEl.innerHTML = `
+          <h2 class="detail-title">View Rankings</h2>
+          <div class="detail-sub">Select a user to view their detailed rankings.</div>
+          ${usersHtml}
+        `;
+
+        detailPanelEl.querySelectorAll('.cdsid-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const selectedCdsid = btn.dataset.id;
+            const userData = usersData[selectedCdsid];
+            
+            const pwd = prompt(`Enter password for ${selectedCdsid}:`);
+            if (pwd === null) return;
+            if (userData.password && userData.password !== pwd) {
+              alert("Incorrect password!");
+              return;
+            }
+
+            let tableHtml = `
+              <h2 class="detail-title" style="margin-top:2rem;">Rankings for ${selectedCdsid}</h2>
+              <div class="detail-sub">Showing the winning algorithm for each rated file.</div>
+              <div style="overflow-x:auto;">
+              <table style="width:100%; margin-top:1.5rem; border-collapse:collapse; font-size:0.85rem; text-align:left;">
+                <tr style="border-bottom:1px solid var(--border); background:rgba(255,255,255,0.05);">
+                  <th style="padding:0.85rem;">Algo Name</th>
+                  <th style="padding:0.85rem;">File Name</th>
+                  <th style="padding:0.85rem;">dB</th>
+                  <th style="padding:0.85rem;">Score</th>
+                </tr>
+            `;
+
+            samples.forEach(s => {
+              const fileRatings = userData.samples ? userData.samples[s.displayName] : null;
+              let winner = "-";
+              let maxScore = "-";
+              let dbVal = "-";
+              
+              const m = s.fileName.match(/([-0-9.]+dB)/);
+              if (m) dbVal = m[1];
+
+              if (fileRatings) {
+                let highest = -1;
+                for (const [algo, score] of Object.entries(fileRatings)) {
+                  if (score > highest) {
+                    highest = score;
+                    winner = algo;
+                  }
+                }
+                maxScore = highest;
+              }
+
+              tableHtml += `
+                <tr style="border-bottom:1px solid #1a222d;">
+                  <td style="padding:0.85rem; font-weight:bold; color:var(--sqa);">${winner}</td>
+                  <td style="padding:0.85rem;">${s.displayName}</td>
+                  <td style="padding:0.85rem;">${dbVal}</td>
+                  <td style="padding:0.85rem;">${maxScore}</td>
+                </tr>
+              `;
+            });
+
+            tableHtml += `</table></div>`;
+            detailPanelEl.innerHTML = tableHtml;
+          });
+        });
+
+      } catch (e) {
+        detailPanelEl.innerHTML = `<h2 class="detail-title">Error loading rankings</h2><p>${e.message}</p>`;
       }
     });
   </script>
