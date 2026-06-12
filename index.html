@@ -1384,6 +1384,7 @@
         }
 
         localStorage.setItem('user_cdsid', cdsid);
+        renderDetail();
         modalOverlay.classList.add('hidden');
       } catch (e) {
         modalError.textContent = "Error connecting to database.";
