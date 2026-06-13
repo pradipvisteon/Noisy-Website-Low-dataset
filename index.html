@@ -1373,7 +1373,7 @@
           }
         } else {
           // New user
-          if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(pwd)) {
+          if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(pwd)) {
             modalError.textContent = "Password must have min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char.";
             modalError.style.display = 'block';
             modalSubmit.textContent = originalText;
