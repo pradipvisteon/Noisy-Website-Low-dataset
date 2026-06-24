@@ -19,14 +19,7 @@
       --border: #1f2630;
       --success: #44d97e;
       --danger: #ff4f4f;
-      --webrtc: #44d97e;
-      --sqa: #38d9ff;
-      --rnn: #a56bff;
-      --hybridrs: #ffbf4d;
-      --hybridrw: #ff8f3f;
-      --rsadapv: #e74c3c;
       --rspv: #9b59b6;
-      --rwadapv: #f1c40f;
       --rwpv: #e67e22;
       --radius: 16px;
       --radius-sm: 10px;
@@ -229,15 +222,7 @@
       opacity: 0.45;
       filter: saturate(0.4);
     }
-
-    .pill[data-key="WebRTC"] { border-color: color-mix(in srgb, var(--webrtc) 45%, var(--border)); }
-    .pill[data-key="sqa"] { border-color: color-mix(in srgb, var(--sqa) 45%, var(--border)); }
-    .pill[data-key="RNN"] { border-color: color-mix(in srgb, var(--rnn) 45%, var(--border)); }
-    .pill[data-key="HybridRS"] { border-color: color-mix(in srgb, var(--hybridrs) 45%, var(--border)); }
-    .pill[data-key="HybridRW"] { border-color: color-mix(in srgb, var(--hybridrw) 45%, var(--border)); }
-    .pill[data-key="RSADAPV"] { border-color: color-mix(in srgb, var(--rsadapv) 45%, var(--border)); }
     .pill[data-key="RSPV"] { border-color: color-mix(in srgb, var(--rspv) 45%, var(--border)); }
-    .pill[data-key="RWADAPV"] { border-color: color-mix(in srgb, var(--rwadapv) 45%, var(--border)); }
     .pill[data-key="RWPV"] { border-color: color-mix(in srgb, var(--rwpv) 45%, var(--border)); }
 
     .pill-reset {
@@ -582,58 +567,6 @@
         padding: 0.95rem;
       }
     }
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-overlay.hidden {
-      display: none;
-    }
-    .modal-content {
-      background: var(--panel);
-      padding: 2.5rem;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      text-align: center;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-    }
-    .modal-content h3 {
-      margin-top: 0;
-      margin-bottom: 1rem;
-      font-family: "Syne", sans-serif;
-    }
-    .modal-content p {
-      color: var(--muted);
-      margin-bottom: 1.5rem;
-      font-size: 0.95rem;
-    }
-    .cdsid-input {
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid #334155;
-      color: var(--text);
-      font-family: "Space Mono", monospace;
-      font-size: 1.1rem;
-      padding: 0.8rem 1rem;
-      border-radius: var(--radius-sm);
-      outline: none;
-      transition: border-color 0.2s ease;
-      width: 100%;
-      text-transform: uppercase;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      box-sizing: border-box;
-    }
-    .cdsid-input:focus {
-      border-color: var(--sqa);
-    }
     .submit-actions {
       margin-top: 2rem;
       display: flex;
@@ -694,37 +627,9 @@
       color: var(--text);
       border-top: 1px dashed var(--border);
     }
-
-    .rating-input {
-      width: 60px;
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid #334155;
-      color: var(--text);
-      font-family: "Space Mono", monospace;
-      font-size: 0.85rem;
-      padding: 0.35rem 0.5rem;
-      border-radius: 6px;
-      text-align: center;
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
     .rating-input:focus {
       border-color: var(--sqa);
       box-shadow: 0 0 0 2px rgba(56, 217, 255, 0.15);
-    }
-    .rating-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 0.6rem;
-      padding-top: 0.6rem;
-      border-top: 1px dashed #2a3340;
-    }
-    .rating-label {
-      font-size: 0.7rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
     #toast-container {
@@ -785,19 +690,7 @@
 </head>
 <body>
   <div id="toast-container"></div>
-  <div id="cdsid-modal-overlay" class="modal-overlay">
-    <div class="modal-content">
-      <h3 id="modal-title">Welcome to the Evaluation</h3>
-      <p id="modal-desc">Please enter your CDSID and password to begin.</p>
-      <input type="text" id="modal-cdsid-input" class="cdsid-input" placeholder="Enter CDSID" />
-      <div style="position: relative;">
-        <input type="password" id="modal-password-input" class="cdsid-input" placeholder="Password" style="margin-bottom: 1rem; width: 100%; padding-right: 40px; text-transform: none;"/>
-        <span id="modal-pwd-toggle" style="position: absolute; right: 12px; top: 12px; cursor: pointer; color: var(--muted); font-size: 1.2rem;">👁️</span>
-      </div>
-      <div id="modal-error" style="color: var(--danger); font-size: 0.85rem; margin-bottom: 1rem; display: none;"></div>
-      <button id="modal-cdsid-submit" class="submit-btn" style="width: 100%;">Start Rating</button>
-    </div>
-  </div>
+  
 
   <div class="container">
     <header class="hero">
@@ -808,8 +701,7 @@
             Comparative evaluation of noisy speech enhancement pipelines across classical suppression and neural hybrid denoising methods.
           </div>
         </div>
-        <div style="display: flex; gap: 1rem; align-items: center; align-self: flex-end; margin-left: auto;">
-          <div class="live-badge"><span class="live-dot"></span> Live Analysis</div>
+        
           <button id="btn-logout-header" style="background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 0.45rem 0.7rem; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; font-family: 'Space Mono', monospace; font-size: 0.8rem; text-transform: uppercase;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             Logout
@@ -840,10 +732,7 @@
     <main class="main-layout">
       <div style="display:flex; flex-direction:column; gap:var(--space-3);">
         <aside class="sidebar" id="sample-list" aria-label="Sample list"></aside>
-        <div class="sidebar-actions" style="display:flex; flex-direction:column; gap:0.5rem;">
-          <button id="btn-view-rankings" class="submit-btn" style="width: 100%; font-size: 0.85rem; padding: 0.6rem;">View Rankings</button>
-          <button id="btn-global-stats" class="submit-btn" style="width: 100%; font-size: 0.85rem; padding: 0.6rem; background: var(--sqa);">Global Stats</button>
-        </div>
+        
       </div>
       <section class="detail-panel" id="detail-panel"></section>
     </main>
@@ -856,21 +745,10 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    
+    
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDelpix5jlxN1sAnndvued-BqDyVEVlBa0",
-      authDomain: "web-app-9c0b3.firebaseapp.com",
-      projectId: "web-app-9c0b3",
-      storageBucket: "web-app-9c0b3.firebasestorage.app",
-      messagingSenderId: "923051189730",
-      appId: "1:923051189730:web:159dbc84e8597a230d85bb",
-      measurementId: "G-ZVX26HDKTR"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    
 
     function showToast(msg, isError = false) {
       const container = document.getElementById('toast-container');
@@ -899,15 +777,8 @@
     }
 
     const algorithms = [
-      { key: "WebRTC", label: "WebRTC", shortLabel: "WebRTC", color: "var(--webrtc)", tag: "PROCESSED", csvKey: "WebRTC" },
-      { key: "sqa", label: "SQA", shortLabel: "SQA", color: "var(--sqa)", tag: "PROCESSED", csvKey: "sqa" },
-      { key: "RNN", label: "RNN", shortLabel: "RNN", color: "var(--rnn)", tag: "PROCESSED", csvKey: "RNN" },
-      { key: "HybridRW", label: "HybridRW (RNN + WebRTC)", shortLabel: "HybridRW", color: "var(--hybridrw)", tag: "PROCESSED", csvKey: "RW" },
-      { key: "HybridRS", label: "HybridRS (RNN + SQA)", shortLabel: "HybridRS", color: "var(--hybridrs)", tag: "PROCESSED", csvKey: "RS" },
       { key: "RWPV", label: "RWPV (HybridRW + PhaseVocoder)", shortLabel: "RWPV", color: "var(--rwpv)", tag: "PROCESSED", csvKey: "RWPV" },
-      { key: "RSPV", label: "RSPV (HybridRS + PhaseVocoder)", shortLabel: "RSPV", color: "var(--rspv)", tag: "PROCESSED", csvKey: "RSPV" },
-      { key: "RWADAPV", label: "RWADAPV (RWPV + Adaptive)", shortLabel: "RWADAPV", color: "var(--rwadapv)", tag: "PROCESSED", csvKey: "RWADAPV" },
-      { key: "RSADAPV", label: "RSADAPV (RSPV + Adaptive)", shortLabel: "RSADAPV", color: "var(--rsadapv)", tag: "PROCESSED", csvKey: "RSADAPV" }
+      { key: "RSPV", label: "RSPV (HybridRS + PhaseVocoder)", shortLabel: "RSPV", color: "var(--rspv)", tag: "PROCESSED", csvKey: "RSPV" }
     ];
 
     const getShorthand = (fileName) => { 
@@ -925,7 +796,7 @@
       { fileName: "AMBUrbn_Parisian paved square fountain (ID 1081)_BigSoundBank.com_SNR_-1.01dB.wav", displayName: "Parisian Square Fountain", plotFolder: "Parisian paved square fountain_-1.01dB" },
       { fileName: "AMBUrbn_Parisian ring road (ID 1080)_BigSoundBank.com_SNR_-0.48dB.wav", displayName: "Parisian Ring Road", plotFolder: "Parisian ring road_-0.48dB" },
       { fileName: "Door_slam_-7.19dB.wav", displayName: "Door Slam", plotFolder: "Door_slam_-7.19dB" },
-      { fileName: "Horn_honk_-12.94dB.wav", displayName: "Horn Honk", plotFolder: "Horn_honk_-12.94dB" },
+      { fileName: "Horn_honk_-12.94dB.wav", displayName: "Horn Honk", plotFolder: "Horn_honk_-3.94dB" },
       { fileName: "RAINGlas_Rain on car windshield (ID 1295)_BigSoundBank.com_SNR_6.34dB.wav", displayName: "Rain on Car Windshield", plotFolder: "Rain on car windshield_6.34dB" },
       { fileName: "RAINGlas_Storm and rain on car windshield (ID 1296)_BigSoundBank.com_SNR_-0.27dB.wav", displayName: "Storm & Rain Windshield", plotFolder: "Storm and rain on car windshield_-0.27dB" },
       { fileName: "Road_bumps_2.95dB.wav", displayName: "Road Bumps", plotFolder: "Road_bumps_2.95dB" },
@@ -934,7 +805,7 @@
       { fileName: "VEHCar_Car arrival stop departure (ID 0187)_BigSoundBank.com_SNR_0.23dB.wav", displayName: "Car Arrival Stop Departure", plotFolder: "Car arrival stop departure_0.23dB" },
       { fileName: "VEHInt_Car interior 80km h (ID 0505)_BigSoundBank.com_SNR_-6.44dB.wav", displayName: "Car Interior 80 km/h", plotFolder: "Car interior 80km h_-6.44dB" },
       { fileName: "VEHInt_Cars interior off (ID 0557)_BigSoundBank.com_SNR_4.64dB.wav", displayName: "Cars Interior Off", plotFolder: "Cars interior off_4.64dB" },
-      { fileName: "Wind_-10.53dB.wav", displayName: "Wind", plotFolder: "Wind_-10.53dB" }
+      { fileName: "Wind_-10.53dB.wav", displayName: "Wind", plotFolder: "Wind_-3.53dB" }
     ];
 
     function escapeHtml(text) {
@@ -953,8 +824,7 @@
 
     const state = {
       selected: samples[0].id,
-      visible: Object.fromEntries(algorithms.map((a) => [a.key, true])),
-      firebaseRatings: null
+      visible: Object.fromEntries(algorithms.map((a) => [a.key, true]))
     };
 
     const sampleListEl = document.getElementById("sample-list");
@@ -1027,10 +897,7 @@
 
     function createAudioCard({ key, shortLabel, color, tag }, sample) {
       const file = audioPath(key, sample);
-      const savedCdsid = localStorage.getItem('user_cdsid') || '';
-      const isCompleted = state.firebaseRatings && state.firebaseRatings[sample.displayName];
-      const firebaseRating = isCompleted && state.firebaseRatings[sample.displayName][key] !== undefined ? state.firebaseRatings[sample.displayName][key] : null;
-      const savedRating = firebaseRating !== null ? firebaseRating : (localStorage.getItem(`rating_${savedCdsid}_${sample.id}_${key}`) || '');
+      
       return `
         <article class="audio-card" data-algo="${key}" style="border-top-color:${color};">
           <div class="card-head">
@@ -1046,13 +913,7 @@
             <audio class="native-audio" preload="none" src="${file}" data-role="audio" controls></audio>
             <div class="missing" data-role="missing" hidden>Audio unavailable. Place file at <code>${file}</code></div>
             
-            <div class="rating-wrap">
-              <div class="rating-label">Rate Output (/10)</div>
-              <div class="rating-input-container">
-                <input type="number" class="rating-input" data-sample="${sample.id}" data-algo="${key}" min="0" max="10" step="0.1" value="${savedRating}" placeholder="0.0" ${isCompleted ? 'disabled style="background: rgba(0,255,0,0.1); cursor: not-allowed; color: var(--success);"' : ''}>
-              </div>
             </div>
-          </div>
         </article>
       `;
     }
@@ -1061,14 +922,10 @@
     function createPlotsGrid(sample) {
       const folder = sample.plotFolder;
       if (!folder) return '';
-      const pngs = ['OUT_SNR.png', 'SegSNR_Out.png', 'STOI_Out.png', 'MOS_S_Out.png', 'MOS_A_Out.png'];
       let html = '<div class="plots-grid">';
-      pngs.forEach(png => {
-        html += `<figure class="plot-card">
-          <img src="Metric Plots/${encodeURIComponent(folder)}/${encodeURIComponent(png)}" alt="${png}" />
-          <figcaption>${png}</figcaption>
-        </figure>`;
-      });
+      html += `<figure class="plot-card" style="padding: 0; background: transparent; border: none;">
+        <img src="Metric Plots/${encodeURIComponent(folder)}.png" alt="${folder}" style="width: 100%; max-width: 1200px; border-radius: 8px;" />
+      </figure>`;
       html += '</div>';
       return html;
     }
@@ -1134,12 +991,7 @@
           ${algorithms.map((algo) => createAudioCard(algo, sample)).join("")}
         </div>
         
-        <div class="submit-actions">
-          ${(state.firebaseRatings && state.firebaseRatings[sample.displayName]) 
-            ? `<button class="submit-btn" disabled style="background: var(--success); cursor: default; border-color: var(--success); color: #000; opacity: 1;">Already Submitted</button>`
-            : `<button class="submit-btn" id="submit-ratings-btn" type="button">Submit Ratings</button>`
-          }
-        </div>
+        
         
         <h3 style="margin-top:2.5rem; margin-bottom:0.5rem; font-family:'Syne', sans-serif;">Metric Visualization Plots</h3>
         ${createPlotsGrid(sample)}
@@ -1270,570 +1122,6 @@
     createSampleList();
     renderDetail();
 
-    // Modal Logic
-    const modalOverlay = document.getElementById('cdsid-modal-overlay');
-    const modalCdsidInput = document.getElementById('modal-cdsid-input');
-    const modalPasswordInput = document.getElementById('modal-password-input');
-    const modalError = document.getElementById('modal-error');
-    const modalSubmit = document.getElementById('modal-cdsid-submit');
-    const modalTitle = document.getElementById('modal-title');
-    const modalDesc = document.getElementById('modal-desc');
-
-    function checkCdsid() {
-      const savedCdsid = localStorage.getItem('user_cdsid');
-      modalOverlay.classList.remove('hidden');
-      if (savedCdsid) {
-        modalCdsidInput.value = savedCdsid;
-        modalTitle.textContent = "Welcome Back!";
-        modalDesc.textContent = "Please enter your password to continue.";
-        modalPasswordInput.focus();
-      } else {
-        modalCdsidInput.focus();
-      }
-    }
-
-    modalCdsidInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        modalPasswordInput.focus();
-      }
-    });
-
-    modalPasswordInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        modalSubmit.click();
-      }
-    });
-
-    modalSubmit.addEventListener('click', async () => {
-      const cdsid = modalCdsidInput.value.trim().toUpperCase();
-      const pwd = modalPasswordInput.value.trim();
-      modalError.style.display = 'none';
-
-      if (!cdsid || !/^[A-Z0-9]+$/.test(cdsid)) {
-        modalError.textContent = "Invalid CDSID. Letters and numbers only.";
-        modalError.style.display = 'block';
-        return;
-      }
-      if (!pwd) {
-        modalError.textContent = "Please enter a password.";
-        modalError.style.display = 'block';
-        return;
-      }
-
-      const originalText = modalSubmit.textContent;
-      modalSubmit.textContent = "Verifying...";
-      modalSubmit.disabled = true;
-
-      try {
-        const docRef = doc(db, "ratings", cdsid);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          state.firebaseRatings = data.samples || {};
-          if (data.password) {
-            if (data.password !== pwd) {
-              modalError.textContent = "Incorrect password.";
-              modalError.style.display = 'block';
-              modalSubmit.textContent = originalText;
-              modalSubmit.disabled = false;
-              return;
-            }
-          } else {
-            // Legacy user without password, set it
-            if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(pwd)) {
-              modalError.textContent = "Legacy user: Please set a secure password (min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char).";
-              modalError.style.display = 'block';
-              modalSubmit.textContent = originalText;
-              modalSubmit.disabled = false;
-              return;
-            }
-            
-            // Calculate existing winCounters
-            const calculatedWins = { WebRTC:0, sqa:0, RNN:0, HybridRW:0, HybridRS:0, RWPV:0, RSPV:0, RWADAPV:0, RSADAPV:0 };
-            if (data.samples) {
-              for (const [sampleName, fileRatings] of Object.entries(data.samples)) {
-                let highest = -1;
-                let winner = null;
-                for (const [algo, score] of Object.entries(fileRatings)) {
-                  if (score > highest) {
-                    highest = score;
-                    winner = algo;
-                  }
-                }
-                if (winner && calculatedWins[winner] !== undefined) {
-                  calculatedWins[winner]++;
-                }
-              }
-            }
-
-            await updateDoc(docRef, { password: pwd, winCounters: calculatedWins });
-          }
-        } else {
-          // New user
-          if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(pwd)) {
-            modalError.textContent = "Password must have min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char.";
-            modalError.style.display = 'block';
-            modalSubmit.textContent = originalText;
-            modalSubmit.disabled = false;
-            return;
-          }
-          await setDoc(docRef, {
-            cdsid: cdsid,
-            password: pwd,
-            timestamp: serverTimestamp(),
-            winCounters: { WebRTC:0, sqa:0, RNN:0, HybridRW:0, HybridRS:0, RWPV:0, RSPV:0, RWADAPV:0, RSADAPV:0 }
-          });
-        }
-
-        localStorage.setItem('user_cdsid', cdsid);
-        renderDetail();
-        modalOverlay.classList.add('hidden');
-      } catch (e) {
-        modalError.textContent = "Error connecting to database.";
-        modalError.style.display = 'block';
-      }
-
-      modalSubmit.textContent = originalText;
-      modalSubmit.disabled = false;
-    });
-
-    checkCdsid();
-
-    detailPanelEl.addEventListener('click', async (e) => {
-      if (e.target.id === 'submit-ratings-btn') {
-        const btn = e.target;
-        const cdsid = localStorage.getItem('user_cdsid');
-
-        if (!cdsid) {
-          showToast("Your session has lost your CDSID. Please refresh the page.", true);
-          return;
-        }
-
-        // Validate current sample
-        const ratings = {};
-        detailPanelEl.querySelectorAll('.rating-input').forEach(input => {
-          const val = parseFloat(input.value);
-          if (!isNaN(val)) ratings[input.dataset.algo] = val;
-        });
-
-        const totalInputs = detailPanelEl.querySelectorAll('.rating-input').length;
-        if (Object.keys(ratings).length < totalInputs) {
-          showToast(`Please provide a rating for all ${totalInputs} algorithms before submitting.`, true);
-          return;
-        }
-
-        const scores = Object.values(ratings);
-        const maxScore = Math.max(...scores);
-        const maxScoreCount = scores.filter(s => s === maxScore).length;
-        if (maxScoreCount > 1) {
-          showToast("Only One WINNER | NO TIE ALLOWED", true);
-          return;
-        }
-
-        const originalText = btn.textContent;
-        btn.textContent = "Saving...";
-        btn.disabled = true;
-
-        try {
-          const sample = samples.find(s => s.id === state.selected);
-          const docRef = doc(db, "ratings", cdsid);
-
-          // Check if already submitted
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            if (data.samples && data.samples[sample.displayName]) {
-              showToast(`You have already submitted ratings for ${sample.displayName}.`, true);
-              btn.textContent = originalText;
-              btn.disabled = false;
-              
-              detailPanelEl.querySelectorAll('.rating-input').forEach(input => {
-                input.value = '';
-                localStorage.removeItem(`rating_${cdsid}_${sample.id}_${input.dataset.algo}`);
-              });
-
-              // Push them to next available if possible
-              const currentIndex = samples.findIndex(s => s.id === state.selected);
-              if (currentIndex < samples.length - 1) {
-                setSelected(samples[currentIndex + 1].id);
-              }
-              return;
-            }
-          }
-
-          let highestScore = -1;
-          let winnerAlgo = null;
-          for (const [algo, score] of Object.entries(ratings)) {
-            if (score > highestScore) {
-              highestScore = score;
-              winnerAlgo = algo;
-            }
-          }
-
-          const updateData = {
-            cdsid: cdsid,
-            samples: {
-              [sample.displayName]: ratings
-            },
-            timestamp: serverTimestamp()
-          };
-          if (winnerAlgo) {
-             updateData.winCounters = { [winnerAlgo]: increment(1) };
-          }
-
-          await setDoc(docRef, updateData, { merge: true });
-          
-          if (!state.firebaseRatings) state.firebaseRatings = {};
-          state.firebaseRatings[sample.displayName] = ratings;
-
-          // Clear inputs and remove from local storage
-          detailPanelEl.querySelectorAll('.rating-input').forEach(input => {
-            input.value = '';
-            localStorage.removeItem(`rating_${cdsid}_${sample.id}_${input.dataset.algo}`);
-          });
-
-          // Move to next sample if not at the end
-          const currentIndex = samples.findIndex(s => s.id === state.selected);
-          if (currentIndex < samples.length - 1) {
-            btn.textContent = "Saved!";
-            showToast(`Thank you for giving us your expensive time 🙏 Rating for ${sample.displayName} is saved!`, false);
-            setTimeout(() => {
-              setSelected(samples[currentIndex + 1].id);
-              detailPanelEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 1000);
-            return;
-          } else {
-            detailPanelEl.innerHTML = `
-              <div style="text-align: center; padding: 4rem 2rem;">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
-                <h2 style="font-family: 'Syne', sans-serif; font-size: 2.5rem; margin-bottom: 1rem; color: var(--sqa);">Evaluation Complete</h2>
-                <p style="font-size: 1.1rem; color: var(--text); opacity: 0.8; margin-bottom: 2rem;">All evaluation is complete. Thank you for your precious time.</p>
-                <p style="font-size: 0.95rem; color: var(--text); opacity: 0.6;">Your feedback has been securely saved to the database. You may now close this page or explore the global statistics.</p>
-              </div>
-            `;
-            detailPanelEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            return;
-          }
-          
-        } catch (error) {
-          console.error("Error adding document: ", error);
-          showToast("Error saving ratings. Please check your console.", true);
-          btn.textContent = originalText;
-          btn.disabled = false;
-          return;
-        }
-      }
-    });
-
-    detailPanelEl.addEventListener('input', (e) => {
-      if (e.target.classList.contains('rating-input')) {
-        let val = parseFloat(e.target.value);
-        if (isNaN(val)) return;
-        if (val < 0) val = 0;
-        if (val > 10) val = 10;
-        
-        const sampleId = e.target.dataset.sample;
-        const algoKey = e.target.dataset.algo;
-        const cdsid = localStorage.getItem('user_cdsid') || '';
-        
-        localStorage.setItem(`rating_${cdsid}_${sampleId}_${algoKey}`, val);
-      }
-    });
-
-    document.getElementById('btn-global-stats').addEventListener('click', async () => {
-      detailPanelEl.innerHTML = `<h2 class="detail-title">Loading Global Stats...</h2>`;
-      try {
-        const querySnapshot = await getDocs(collection(db, "ratings"));
-        const totals = { WebRTC:0, sqa:0, RNN:0, HybridRW:0, HybridRS:0, RWPV:0, RSPV:0, RWADAPV:0, RSADAPV:0 };
-        let totalFilesRated = 0;
-        querySnapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          if (data.winCounters) {
-            for (const [algo, count] of Object.entries(data.winCounters)) {
-               if (totals[algo] !== undefined) totals[algo] += count;
-               totalFilesRated += count;
-            }
-          }
-        });
-
-        let maxWins = Math.max(...Object.values(totals), 1);
-        let barsHtml = '';
-        const algoLabels = { WebRTC: "WebRTC", sqa: "SQA", RNN: "RNN", HybridRW: "HybridRW", HybridRS: "HybridRS", RWPV: "RWPV", RSPV: "RSPV", RWADAPV: "RWADAPV", RSADAPV: "RSADAPV" };
-        const algoColors = { WebRTC: "var(--webrtc)", sqa: "var(--sqa)", RNN: "var(--rnn)", HybridRW: "var(--hybridrw)", HybridRS: "var(--hybridrs)", RWPV: "var(--rwpv)", RSPV: "var(--rspv)", RWADAPV: "var(--rwadapv)", RSADAPV: "var(--rsadapv)" };
-
-        for (const [algo, count] of Object.entries(totals)) {
-          const pct = (count / maxWins) * 100;
-          barsHtml += `
-            <div style="margin-bottom: 1rem;">
-              <div style="display:flex; justify-content:space-between; font-size: 0.85rem; margin-bottom: 0.3rem;">
-                <span style="color:${algoColors[algo]};">${algoLabels[algo]}</span>
-                <span>${count} wins</span>
-              </div>
-              <div style="width: 100%; height: 24px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
-                <div style="width: ${pct}%; height: 100%; background: ${algoColors[algo]}; transition: width 0.5s ease;"></div>
-              </div>
-            </div>
-          `;
-        }
-
-        detailPanelEl.innerHTML = `
-          <h2 class="detail-title">Global Winners</h2>
-          <div class="detail-sub">Total files rated across all users: ${totalFilesRated}</div>
-          <div style="margin-top: 2rem; background: var(--panel-2); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border);">
-            ${barsHtml}
-          </div>
-        `;
-        detailPanelEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } catch (e) {
-        detailPanelEl.innerHTML = `<h2 class="detail-title">Error loading stats</h2><p>${e.message}</p>`;
-      }
-    });
-
-    document.getElementById('btn-logout-header').addEventListener('click', () => {
-      localStorage.removeItem('user_cdsid');
-      state.firebaseRatings = null;
-      location.reload();
-    });
-
-    document.getElementById('btn-view-rankings').addEventListener('click', async () => {
-      detailPanelEl.innerHTML = `<h2 class="detail-title">Loading Rankings...</h2>`;
-      try {
-        const querySnapshot = await getDocs(collection(db, "ratings"));
-        let usersHtml = '<div style="display:flex; flex-wrap:wrap; gap:1rem; margin-top:2rem;">';
-        const usersData = {};
-        querySnapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          usersData[data.cdsid] = data;
-          usersHtml += `<button class="submit-btn cdsid-btn" data-id="${data.cdsid}" style="background: var(--panel-2); border: 1px solid var(--border); color: var(--text); padding: 0.8rem 1.5rem;">${data.cdsid}</button>`;
-        });
-        usersHtml += '</div>';
-
-        const renderUsersList = () => {
-          detailPanelEl.innerHTML = `
-            <h2 class="detail-title">View Rankings</h2>
-            <div class="detail-sub">Select a user to view their detailed rankings.</div>
-            ${usersHtml}
-          `;
-          detailPanelEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-          detailPanelEl.querySelectorAll('.cdsid-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-              const selectedCdsid = btn.dataset.id;
-              const userData = usersData[selectedCdsid];
-              
-              detailPanelEl.innerHTML = `
-                <button id="rankings-pwd-cancel" style="background:none; border:none; color:var(--text); cursor:pointer; font-size:1.2rem; margin-bottom:1rem; padding:0; display:flex; align-items:center; gap:0.5rem;">&larr; <span style="font-size:0.9rem;">Back</span></button>
-                <h2 class="detail-title">Enter Password</h2>
-                <div class="detail-sub">Please enter the password for ${selectedCdsid}</div>
-                <div style="margin-top: 2rem; max-width: 400px;">
-                  <div style="position: relative;">
-                    <input type="password" id="rankings-pwd-input" class="cdsid-input" placeholder="Password" style="margin-bottom: 1rem; width: 100%; padding-right: 40px; text-transform: none;"/>
-                    <span id="rankings-pwd-toggle" style="position: absolute; right: 12px; top: 12px; cursor: pointer; color: var(--muted); font-size: 1.2rem;">👁️</span>
-                  </div>
-                  <div id="rankings-error" style="color: var(--danger); font-size: 0.85rem; margin-bottom: 1rem; display: none;">Incorrect password!</div>
-                  <button id="rankings-pwd-submit" class="submit-btn" style="width: 100%;">View Results</button>
-                </div>
-              `;
-
-              const pwdInput = document.getElementById('rankings-pwd-input');
-              const pwdSubmit = document.getElementById('rankings-pwd-submit');
-              const pwdCancel = document.getElementById('rankings-pwd-cancel');
-              const pwdError = document.getElementById('rankings-error');
-
-              pwdInput.focus();
-
-              const pwdToggle = document.getElementById('rankings-pwd-toggle');
-              pwdToggle.addEventListener('click', () => {
-                if (pwdInput.type === 'password') {
-                  pwdInput.type = 'text';
-                  pwdToggle.textContent = '🔒';
-                } else {
-                  pwdInput.type = 'password';
-                  pwdToggle.textContent = '👁️';
-                }
-              });
-
-              const verifyAndRender = () => {
-                const pwd = pwdInput.value.trim();
-                if (userData.password && userData.password !== pwd) {
-                  pwdError.style.display = 'block';
-                  return;
-                }
-
-                // Calculate personal totals and map files to winners
-                const personalTotals = { WebRTC:0, sqa:0, RNN:0, HybridRW:0, HybridRS:0, RWPV:0, RSPV:0, RWADAPV:0, RSADAPV:0 };
-                const algoFilesMap = { WebRTC:[], sqa:[], RNN:[], HybridRW:[], HybridRS:[], RWPV:[], RSPV:[], RWADAPV:[], RSADAPV:[] };
-                let totalFilesRated = 0;
-
-                samples.forEach(s => {
-                  const fileRatings = userData.samples ? userData.samples[s.displayName] : null;
-                  let winner = null;
-                  let maxScore = "-";
-                  let dbVal = "-";
-                  
-                  const m = s.fileName.match(/([-0-9.]+dB)/);
-                  if (m) dbVal = m[1];
-
-                  if (fileRatings) {
-                    let highest = -1;
-                    for (const [algo, score] of Object.entries(fileRatings)) {
-                      if (score > highest) {
-                        highest = score;
-                        winner = algo;
-                      }
-                    }
-                    maxScore = highest;
-                    if (winner) {
-                      if (personalTotals[winner] !== undefined) personalTotals[winner]++;
-                      if (algoFilesMap[winner]) {
-                        algoFilesMap[winner].push({ displayName: s.displayName, dbVal, maxScore });
-                      }
-                      totalFilesRated++;
-                    }
-                  }
-                });
-
-                const renderChart = () => {
-                  let maxWins = Math.max(...Object.values(personalTotals), 1);
-                  let barsHtml = '';
-                  const algoLabels = { WebRTC: "WebRTC", sqa: "SQA", RNN: "RNN", HybridRW: "HybridRW", HybridRS: "HybridRS", RWPV: "RWPV", RSPV: "RSPV", RWADAPV: "RWADAPV", RSADAPV: "RSADAPV" };
-                  const algoColors = { WebRTC: "var(--webrtc)", sqa: "var(--sqa)", RNN: "var(--rnn)", HybridRW: "var(--hybridrw)", HybridRS: "var(--hybridrs)", RWPV: "var(--rwpv)", RSPV: "var(--rspv)", RWADAPV: "var(--rwadapv)", RSADAPV: "var(--rsadapv)" };
-
-                  for (const [algo, count] of Object.entries(personalTotals)) {
-                    if (count === 0) continue; // Only show algos that won at least once
-                    const pct = (count / maxWins) * 100;
-                    barsHtml += `
-                      <div class="personal-bar" data-algo="${algo}" style="margin-bottom: 1rem; cursor: pointer; padding: 0.5rem; border-radius: 4px; transition: background 0.2s;">
-                        <div style="display:flex; justify-content:space-between; font-size: 0.85rem; margin-bottom: 0.3rem; pointer-events: none;">
-                          <span style="color:${algoColors[algo]};">${algoLabels[algo]}</span>
-                          <span style="color:var(--text);">${count} wins &rarr;</span>
-                        </div>
-                        <div style="width: 100%; height: 24px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; pointer-events: none;">
-                          <div style="width: ${pct}%; height: 100%; background: ${algoColors[algo]}; transition: width 0.5s ease;"></div>
-                        </div>
-                      </div>
-                    `;
-                  }
-
-                  if (barsHtml === '') barsHtml = '<div class="detail-sub">No ratings found for this user.</div>';
-
-                  detailPanelEl.innerHTML = `
-                    <h2 class="detail-title" style="margin-top:2rem;">Rankings for ${selectedCdsid}</h2>
-                    <div class="detail-sub">Total files rated: ${totalFilesRated} / 19. <b>Click a bar to see the specific files!</b></div>
-                    <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
-                      <button id="rankings-back-btn" class="submit-btn" style="background: var(--panel-2); border: 1px solid var(--border); color: var(--text); padding: 0.5rem 1rem;">&larr; Back to Users</button>
-                      <button id="chart-csv-btn" class="submit-btn" style="background: var(--sqa); color: var(--bg); padding: 0.5rem 1rem;">Download Full CSV</button>
-                    </div>
-                    <div style="margin-top: 2rem; background: var(--panel-2); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border);">
-                      ${barsHtml}
-                    </div>
-                  `;
-
-                  document.getElementById('rankings-back-btn').addEventListener('click', renderUsersList);
-                  
-                  document.getElementById('chart-csv-btn').addEventListener('click', () => {
-                    let csvRows = ["File Name,dB,Winner,WebRTC,SQA,RNN,HybridRW,HybridRS,RWPV,RSPV,RWADAPV,RSADAPV"];
-                    samples.forEach(s => {
-                      const fileRatings = userData.samples ? userData.samples[s.displayName] : null;
-                      let m = s.fileName.match(/([-0-9.]+dB)/);
-                      let dbVal = m ? m[1] : "-";
-                      if (fileRatings) {
-                        let highest = -1;
-                        let winner = "Tie";
-                        for (const [algo, score] of Object.entries(fileRatings)) {
-                          if (score > highest) {
-                            highest = score;
-                            winner = algoLabels[algo] || algo;
-                          } else if (score === highest && highest > 0) {
-                            winner = "Tie";
-                          }
-                        }
-                        csvRows.push(`${s.displayName},${dbVal},${winner},${fileRatings.WebRTC||0},${fileRatings.sqa||0},${fileRatings.RNN||0},${fileRatings.HybridRW||0},${fileRatings.HybridRS||0},${fileRatings.RWPV||0},${fileRatings.RSPV||0},${fileRatings.RWADAPV||0},${fileRatings.RSADAPV||0}`);
-                      } else {
-                        csvRows.push(`${s.displayName},${dbVal},Not Rated,-,-,-,-,-,-,-,-,-`);
-                      }
-                    });
-                    const blob = new Blob([csvRows.join("\n")], { type: 'text/csv;charset=utf-8;' });
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement("a");
-                    link.setAttribute("href", url);
-                    link.setAttribute("download", `${selectedCdsid}_all_ratings.csv`);
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                  });
-
-                  detailPanelEl.querySelectorAll('.personal-bar').forEach(bar => {
-                    bar.addEventListener('mouseenter', () => bar.style.background = 'rgba(255,255,255,0.05)');
-                    bar.addEventListener('mouseleave', () => bar.style.background = 'transparent');
-                    bar.addEventListener('click', () => {
-                      renderTable(bar.dataset.algo);
-                    });
-                  });
-
-                  detailPanelEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                };
-
-                const renderTable = (algo) => {
-                  const files = algoFilesMap[algo];
-                  const algoLabels = { WebRTC: "WebRTC", sqa: "SQA", RNN: "RNN", HybridRW: "HybridRW", HybridRS: "HybridRS", RWPV: "RWPV", RSPV: "RSPV", RWADAPV: "RWADAPV", RSADAPV: "RSADAPV" };
-                  const algoColors = { WebRTC: "var(--webrtc)", sqa: "var(--sqa)", RNN: "var(--rnn)", HybridRW: "var(--hybridrw)", HybridRS: "var(--hybridrs)", RWPV: "var(--rwpv)", RSPV: "var(--rspv)", RWADAPV: "var(--rwadapv)", RSADAPV: "var(--rsadapv)" };
-                  
-                  let tableHtml = `
-                    <h2 class="detail-title" style="margin-top:2rem;">Files won by <span style="color:${algoColors[algo]}">${algoLabels[algo]}</span></h2>
-                    <div class="detail-sub">User: ${selectedCdsid}</div>
-                    <button id="table-back-btn" class="submit-btn" style="margin-top: 1rem; background: var(--panel-2); border: 1px solid var(--border); color: var(--text); padding: 0.5rem 1rem;">&larr; Back to Chart</button>
-                    <div style="overflow-x:auto;">
-                    <table style="width:100%; margin-top:1.5rem; border-collapse:collapse; font-size:0.85rem; text-align:left;">
-                      <tr style="border-bottom:1px solid var(--border); background:rgba(255,255,255,0.05);">
-                        <th style="padding:0.85rem;">File Name</th>
-                        <th style="padding:0.85rem;">dB</th>
-                        <th style="padding:0.85rem;">Score</th>
-                      </tr>
-                  `;
-
-                  files.forEach(f => {
-                    tableHtml += `
-                      <tr style="border-bottom:1px solid #1a222d;">
-                        <td style="padding:0.85rem;">${f.displayName}</td>
-                        <td style="padding:0.85rem;">${f.dbVal}</td>
-                        <td style="padding:0.85rem;">${f.maxScore}</td>
-                      </tr>
-                    `;
-                  });
-
-                  tableHtml += `</table></div>`;
-                  detailPanelEl.innerHTML = tableHtml;
-                  document.getElementById('table-back-btn').addEventListener('click', renderChart);
-
-                  detailPanelEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                };
-
-                renderChart();
-              };
-
-              pwdSubmit.addEventListener('click', verifyAndRender);
-              pwdCancel.addEventListener('click', renderUsersList);
-              pwdInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  verifyAndRender();
-                }
-              });
-            });
-          });
-        };
-
-        renderUsersList();
-
-      } catch (e) {
-        detailPanelEl.innerHTML = `<h2 class="detail-title">Error loading rankings</h2><p>${e.message}</p>`;
-      }
-    });
-  </script>
+      </script>
 </body>
 </html>
-
